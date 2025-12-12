@@ -1,0 +1,52 @@
+@startuml
+!theme spacelab
+
+title Final Architecture: Outbox/CDC and Dual Cluster
+
+skinparam componentStyle uml2
+
+cloud "Internet/Clients" as Client
+
+node "K8s Cluster: Application (Elastic)" as AppCluster {
+    component "K8s Ingress Controller" as Ingress
+
+    package "Application Services" {
+        component [Auth Service\n(MS 1)] as Auth
+        component [Inventory Command Service\n(MS 3)] as Command
+        component [Inventory Query Service\n(MS 4)] as Query
+        component [Inventory Consumer Service\n(MS 2)] as Consumer
+    }
+}
+
+node "K8s Cluster: Infrastructure (Stable)" as InfraCluster {
+    queue "Kafka Broker" as Kafka
+    component "CDC Relayer\n(Debezium/Kafka Connect)" as CDC
+    database "Auth DB\n(Users & Tokens)" as DBAuth
+    database "Transactional DB (Inventory Write)" as DBWrite
+    database "Query DB (Inventory Read)" as DBRead
+}
+
+' === RELATIONS ===
+
+' 1. Incoming Flow
+Client -> Ingress : HTTP Request
+Ingress --> Auth : Routes /login or /register
+Ingress --> Command : Routes Command
+Ingress --> Query : Routes Query
+
+' 2. Command Flow and Atomicity (Outbox)
+Command --> DBWrite : 1. Atomic Write (Stock + Outbox)
+DBWrite --> CDC : 2. Reads Transaction Log (CDC)
+
+' 3. Event Flow (Asynchronous Publishing)
+CDC --> Kafka : 3. Publishes Event to Topic
+
+' 4. Persistence and Query
+Auth --> DBAuth : User Management
+Query --> DBRead : Read Operation (CQRS Query)
+
+' 5. Synchronization Mechanism (Projection)
+Consumer --> Kafka : 4. Listens for Events
+Consumer --> DBRead : 5. Projects Data (Updates Read DB)
+
+@enduml

@@ -1,2 +1,67 @@
-# supermarket-inventory-backend
-This project simulates the implementation of a robust and scalable microservices architecture
+# 1. Technical Backend Simulation - Supermarket Microservices Architecture
+
+## Architecture: CQRS, EDA (Kafka), Outbox/CDC, and K8s
+
+This project simulates the implementation of a robust and scalable microservices architecture, leveraging the following advanced patterns and technologies:
+
+- **CQRS (Command Query Responsibility Segregation):** Separation of Write (Command) and Read (Query) responsibilities into dedicated services.
+- **EDA (Event-Driven Architecture):** Asynchronous communication via the Apache Kafka event broker.
+- **Outbox Pattern + CDC (Debezium):** Guaranteeing atomicity between the transactional DB write and event publishing.
+- **Containerization:** Using Docker and Docker Compose for local deployment, simulating a real Kubernetes environment.
+- **Isolation:** Segregation of persistence layers (Inventory Write DB, Read DB, and dedicated Auth DB).
+
+---
+
+![Arquitecture diagram](assets/arquitecture.png)
+
+---
+
+## 2. Repository Decision: Monorepo vs. Polyrepo
+
+### Architectural Justification
+
+In a real production environment, the preferred repository model is **Polyrepo (Multiple Repositories)**. This model ensures the complete **autonomy** of each microservice, allowing for:
+
+1.  **Independent CI/CD:** Each service can have its own isolated deployment pipeline.
+2.  **Decoupling:** Teams can work on their service without creating unnecessary coupling in the Git history.
+3.  **Scalability:** Git performance remains optimal as the number of services grows.
+
+### Decision for the Simulation
+
+To simplify the setup, compilation, and presentation of this technical exercise, I have adopted a **Logical Monorepo** structure based on Maven:
+
+- All microservices reside within the same top-level directory.
+- The `common-data-models` module is easily consumed as an internal Maven dependency by the other services.
+- Compilation and packaging are streamlined using a single top-level command.
+
+**The goal is to maintain the simplicity of the build process while rigorously demonstrating the required architectural patterns within the code.**
+
+---
+
+## 3. Service Structure and Responsibilities (Final Naming)
+
+| Module   | Name Final                     | Responsibility                                                                                | Persistence            |
+| :------- | :----------------------------- | :-------------------------------------------------------------------------------------------- | :--------------------- |
+| **MS 1** | **auth-service**               | JWT Management, Login/Registration, Token Validation.                                         | Dedicated Auth DB      |
+| **MS 3** | **inventory-command-service**  | Receives Commands (POST/PUT), Executes Transaction (Stock Logic), Writes to **OUTBOX** table. | Transactional Write DB |
+| **MS 2** | **inventory-consumer-service** | Reads events from Kafka, Executes the Projection Logic (CQRS Sync).                           | Query Read DB          |
+| **MS 4** | **inventory-query-service**    | Serves Read-Only Queries (GET) for inventory data.                                            | Query Read DB          |
+| **N/A**  | **common-data-models**         | Defines shared DTOs and Kafka Event Schemas.                                                  | N/A                    |
+
+---
+
+## 4. Deployment Instructions (Docker Compose)
+
+The architecture is brought up using Docker Compose, simulating the segregation of the Application Layer and the Infrastructure Layer for resilience.
+
+```bash
+# 1. Compile the JARs for all microservices
+mvn clean install
+
+# 2. Spin up all infrastructure and microservices (Postgres, Kafka, Debezium, and 4 MS)
+docker compose up --build -d
+
+# 3. View logs for the Command and Consumer services to verify the event flow (Outbox -> Debezium -> Kafka -> Consumer -> DBRead)
+docker compose logs inventory-command-service
+docker compose logs inventory-consumer-service
+```
