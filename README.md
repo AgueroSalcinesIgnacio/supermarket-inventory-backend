@@ -1,6 +1,6 @@
-# 1. Technical Backend Simulation - Supermarket Microservices Architecture
+# Technical Backend Simulation - Supermarket Microservices Architecture
 
-## Architecture: CQRS, EDA (Kafka), Outbox/CDC, and K8s
+## 1. Architecture: CQRS, EDA (Kafka), Outbox/CDC, and K8s
 
 This project simulates the implementation of a robust and scalable microservices architecture, leveraging the following advanced patterns and technologies:
 
@@ -16,7 +16,32 @@ This project simulates the implementation of a robust and scalable microservices
 
 ---
 
-## 2. Repository Decision: Monorepo vs. Polyrepo
+## 2. Data models
+
+The system uses three separate databases to ensure strict isolation and adherence to the CQRS pattern.
+
+### 1. Auth DB (Users & Security)
+Used by the **Auth Service** (MS 1). It manages user identities and roles.
+*   **USERS**: Stores user credentials (hashed passwords) and profile information.
+*   **ROLES**: Defines available roles (USER, ADMIN).
+*   **USERS_ROLES**: Many-to-Many relationship between users and roles.
+
+### 2. Transactional DB (DBWrite)
+Used by the **Inventory Command Service** (MS 3). It handles all write operations and domain logic.
+*   **PRODUCTS**: Stores product catalog information (source of truth for products).
+*   **INVENTORY**: Manages local stock levels. Modifications here are transactional.
+*   **OUTBOX**: Implements the *Transactional Outbox Pattern*. Events are written here in the same transaction as inventory changes to ensure eventual consistency without distributed transactions (2PC). Debezium reads this table to push events to Kafka.
+
+### 3. Query DB (DBRead)
+Used by the **Inventory Query Service** (MS 4) and updated by the **Inventory Consumer Service** (MS 2).
+*   **INVENTORY_PROJECTION**: A read-optimized view of the inventory. It is updated asynchronously via Kafka events.
+---
+
+![Data model diagram](assets/dataModel.png)
+
+---
+
+## 3. Repository Decision: Monorepo vs. Polyrepo
 
 ### Architectural Justification
 
@@ -38,7 +63,7 @@ To simplify the setup, compilation, and presentation of this technical exercise,
 
 ---
 
-## 3. Service Structure and Responsibilities (Final Naming)
+## 4. Service Structure and Responsibilities (Final Naming)
 
 | Module   | Name Final                     | Responsibility                                                                                | Persistence            |
 | :------- | :----------------------------- | :-------------------------------------------------------------------------------------------- | :--------------------- |
@@ -50,7 +75,7 @@ To simplify the setup, compilation, and presentation of this technical exercise,
 
 ---
 
-## 4. Deployment Instructions (Docker Compose)
+## 5. Deployment Instructions (Docker Compose)
 
 The architecture is brought up using Docker Compose, simulating the segregation of the Application Layer and the Infrastructure Layer for resilience.
 

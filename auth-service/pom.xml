@@ -156,7 +156,6 @@
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless.version}</version>
                 </plugin>
-            
         </plugins>
     </build>
 

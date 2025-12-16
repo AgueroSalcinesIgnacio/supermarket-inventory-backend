@@ -21,6 +21,8 @@ Microservice responsible for authentication and authorization within the Superma
 *   Java Development Kit (JDK) 21
 *   Maven (or use the provided `mvnw` wrapper)
 *   PostgreSQL Database (running locally or via Docker)
+    *   Creates 3 databases: `auth`, `inventory_write`, `inventory_read`
+    *   Auth Schema Tables: `USERS`, `ROLES`, `USERS_ROLES`
 
 ## Configuration
 
@@ -81,23 +83,21 @@ Base URL: `/api/auth`
     {
       "username": "jdoe",
       "email": "jdoe@example.com",
-      "password": "securePassword123",
-      "firstName": "John",
-      "lastName": "Doe"
+      "password": "securePassword123"
     }
     ```
 
     *   `username` (required): 3-50 chars
     *   `email` (required): Valid email format
     *   `password` (required): 6-100 chars
-    *   `firstName` (optional)
-    *   `lastName` (optional)
 
 *   **Response** (`201 Created`):
 
     ```json
     {
-      "token": "eyJhbGciOiJIUzI1NiJ9..."
+      "token": "eyJhbGciOiJIUzI1NiJ9...",
+      "username": "jdoe",
+      "email": "jdoe@example.com"
     }
     ```
 
@@ -119,7 +119,9 @@ Base URL: `/api/auth`
 
     ```json
     {
-      "token": "eyJhbGciOiJIUzI1NiJ9..."
+      "token": "eyJhbGciOiJIUzI1NiJ9...",
+      "username": "jdoe",
+      "email": "jdoe@example.com"
     }
     ```
 

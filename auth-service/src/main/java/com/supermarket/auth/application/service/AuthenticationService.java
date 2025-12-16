@@ -1,5 +1,7 @@
 package com.supermarket.auth.application.service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +13,7 @@ import com.supermarket.auth.infrastructure.adapters.input.dto.LoginRequestDTO;
 import com.supermarket.auth.infrastructure.adapters.input.dto.RegisterRequestDTO;
 import com.supermarket.auth.infrastructure.adapters.output.entity.UserEntity;
 import com.supermarket.auth.infrastructure.adapters.output.mapper.UserEntityMapperImpl;
+import com.supermarket.auth.infrastructure.adapters.output.repository.RoleRepository;
 import com.supermarket.auth.infrastructure.adapters.output.repository.UserRepository;
 import com.supermarket.auth.infrastructure.config.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,9 @@ public class AuthenticationService {
 
   /** Repository for accessing user data. */
   private final UserRepository userRepository;
+
+  /** Repository for accessing role data. */
+  private final RoleRepository roleRepository;
 
   /** Mapper for converting between entities and domain models. */
   private final UserEntityMapperImpl userMapper;
@@ -56,8 +62,10 @@ public class AuthenticationService {
     }
 
     UserEntity user = UserEntity.builder().username(request.getUsername()).email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword())).firstName(request.getFirstName())
-        .lastName(request.getLastName()).role(UserRole.USER).enabled(true).build();
+        .password(passwordEncoder.encode(request.getPassword()))
+        .roles(new HashSet<>(
+            Collections.singletonList(roleRepository.findByName(UserRole.USER).orElseThrow())))
+        .enabled(true).build();
 
     UserEntity savedUser = userRepository.save(user);
     User domainUser = userMapper.toDomain(savedUser);

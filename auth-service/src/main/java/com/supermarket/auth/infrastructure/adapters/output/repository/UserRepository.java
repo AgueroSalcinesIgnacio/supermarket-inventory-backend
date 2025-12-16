@@ -1,10 +1,9 @@
 package com.supermarket.auth.infrastructure.adapters.output.repository;
 
 import java.util.Optional;
-
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import com.supermarket.auth.infrastructure.adapters.output.entity.UserEntity;
 
 /**
@@ -14,7 +13,7 @@ import com.supermarket.auth.infrastructure.adapters.output.entity.UserEntity;
  * @since 1.0
  */
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
   /**
    * Finds a user by username.

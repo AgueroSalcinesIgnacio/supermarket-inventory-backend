@@ -5,7 +5,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supermarket.auth.application.service.AuthenticationService;
 import com.supermarket.auth.infrastructure.adapters.input.dto.AuthResponseDTO;
@@ -25,105 +23,81 @@ import com.supermarket.auth.infrastructure.adapters.input.dto.RegisterRequestDTO
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
 
-  private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-  private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-  @Mock private AuthenticationService authenticationService;
+    @Mock
+    private AuthenticationService authenticationService;
 
-  @InjectMocks private AuthController authController;
+    @InjectMocks
+    private AuthController authController;
 
-  @BeforeEach
-  void setup() {
-    mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
-  }
+    @BeforeEach
+    void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+    }
 
-  @Test
-  void register_ShouldReturnCreated_WhenRequestIsValid() throws Exception {
-    // Given
-    RegisterRequestDTO request =
-        RegisterRequestDTO.builder()
-            .username("jdoe")
-            .email("jdoe@example.com")
-            .password("password123")
-            .firstName("John")
-            .lastName("Doe")
-            .build();
+    @Test
+    void register_ShouldReturnCreated_WhenRequestIsValid() throws Exception {
+        // Given
+        RegisterRequestDTO request = RegisterRequestDTO.builder().username("jdoe")
+                .email("jdoe@example.com").password("password123").build();
 
-    AuthResponseDTO response = new AuthResponseDTO("dummy-token", "jdoe", "jdoe@example.com");
+        AuthResponseDTO response = new AuthResponseDTO("dummy-token", "jdoe", "jdoe@example.com");
 
-    when(authenticationService.register(any(RegisterRequestDTO.class))).thenReturn(response);
+        when(authenticationService.register(any(RegisterRequestDTO.class))).thenReturn(response);
 
-    // When & Then
-    mockMvc
-        .perform(
-            post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
+        // When & Then
+        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.token").value("dummy-token"))
+                .andExpect(jsonPath("$.username").value("jdoe"));
+    }
+
+    @Test
+    void register_ShouldReturnBadRequest_WhenServiceThrowException() throws Exception {
+        // Given
+        RegisterRequestDTO request = RegisterRequestDTO.builder().username("existing")
+                .email("existing@example.com").password("password123").build();
+
+        when(authenticationService.register(any(RegisterRequestDTO.class)))
+                .thenThrow(new IllegalArgumentException("Username already exists"));
+
+        // When & Then
+        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.token").value("dummy-token"))
-        .andExpect(jsonPath("$.username").value("jdoe"));
-  }
+                .andExpect(status().isBadRequest());
+    }
 
-  @Test
-  void register_ShouldReturnBadRequest_WhenServiceThrowException() throws Exception {
-    // Given
-    RegisterRequestDTO request =
-        RegisterRequestDTO.builder()
-            .username("existing")
-            .email("existing@example.com")
-            .password("password123")
-            .firstName("John")
-            .lastName("Doe")
-            .build();
+    @Test
+    void login_ShouldReturnOk_WhenCredentialsAreValid() throws Exception {
+        // Given
+        LoginRequestDTO request =
+                LoginRequestDTO.builder().username("jdoe").password("password123").build();
 
-    when(authenticationService.register(any(RegisterRequestDTO.class)))
-        .thenThrow(new IllegalArgumentException("Username already exists"));
+        AuthResponseDTO response = new AuthResponseDTO("dummy-token", "jdoe", "jdoe@example.com");
 
-    // When & Then
-    mockMvc
-        .perform(
-            post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
+        when(authenticationService.login(any(LoginRequestDTO.class))).thenReturn(response);
+
+        // When & Then
+        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("dummy-token"));
+    }
+
+    @Test
+    void login_ShouldReturnUnauthorized_WhenServiceThrowsException() throws Exception {
+        // Given
+        LoginRequestDTO request =
+                LoginRequestDTO.builder().username("unknown").password("wrong").build();
+
+        when(authenticationService.login(any(LoginRequestDTO.class)))
+                .thenThrow(new RuntimeException("Bad credentials"));
+
+        // When & Then
+        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isBadRequest());
-  }
-
-  @Test
-  void login_ShouldReturnOk_WhenCredentialsAreValid() throws Exception {
-    // Given
-    LoginRequestDTO request =
-        LoginRequestDTO.builder().username("jdoe").password("password123").build();
-
-    AuthResponseDTO response = new AuthResponseDTO("dummy-token", "jdoe", "jdoe@example.com");
-
-    when(authenticationService.login(any(LoginRequestDTO.class))).thenReturn(response);
-
-    // When & Then
-    mockMvc
-        .perform(
-            post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.token").value("dummy-token"));
-  }
-
-  @Test
-  void login_ShouldReturnUnauthorized_WhenServiceThrowsException() throws Exception {
-    // Given
-    LoginRequestDTO request =
-        LoginRequestDTO.builder().username("unknown").password("wrong").build();
-
-    when(authenticationService.login(any(LoginRequestDTO.class)))
-        .thenThrow(new RuntimeException("Bad credentials"));
-
-    // When & Then
-    mockMvc
-        .perform(
-            post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isUnauthorized());
-  }
+                .andExpect(status().isUnauthorized());
+    }
 }

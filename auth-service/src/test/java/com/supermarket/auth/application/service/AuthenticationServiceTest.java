@@ -7,9 +7,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.supermarket.auth.domain.model.User;
 import com.supermarket.auth.domain.model.UserRole;
 import com.supermarket.auth.infrastructure.adapters.input.dto.AuthResponseDTO;
@@ -31,29 +30,29 @@ import com.supermarket.auth.infrastructure.config.security.JwtService;
 @ExtendWith(MockitoExtension.class)
 class AuthenticationServiceTest {
 
-  @Mock private UserRepository userRepository;
-  @Mock private UserEntityMapperImpl userMapper;
-  @Mock private PasswordEncoder passwordEncoder;
-  @Mock private JwtService jwtService;
-  @Mock private AuthenticationManager authenticationManager;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private UserEntityMapperImpl userMapper;
+  @Mock
+  private PasswordEncoder passwordEncoder;
+  @Mock
+  private JwtService jwtService;
+  @Mock
+  private AuthenticationManager authenticationManager;
 
-  @InjectMocks private AuthenticationService authenticationService;
+  @InjectMocks
+  private AuthenticationService authenticationService;
 
   @Test
   void register_ShouldReturnToken_WhenUserIsNotRegistered() {
     // Given
-    RegisterRequestDTO request =
-        RegisterRequestDTO.builder()
-            .username("jdoe")
-            .email("jdoe@example.com")
-            .password("password123")
-            .firstName("John")
-            .lastName("Doe")
-            .build();
+    RegisterRequestDTO request = RegisterRequestDTO.builder().username("jdoe")
+        .email("jdoe@example.com").password("password123").build();
 
     UserEntity savedEntity = new UserEntity();
-    User domainUser =
-        User.builder().username("jdoe").email("jdoe@example.com").role(UserRole.USER).build();
+    User domainUser = User.builder().username("jdoe").email("jdoe@example.com")
+        .roles(new HashSet<>(Collections.singletonList(UserRole.USER))).build();
 
     when(userRepository.existsByUsername(request.getUsername())).thenReturn(false);
     when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
@@ -83,9 +82,7 @@ class AuthenticationServiceTest {
     when(userRepository.existsByUsername(request.getUsername())).thenReturn(true);
 
     // When & Then
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> authenticationService.register(request),
+    assertThrows(IllegalArgumentException.class, () -> authenticationService.register(request),
         "Username already exists");
 
     verify(userRepository, never()).save(any(UserEntity.class));
@@ -100,9 +97,7 @@ class AuthenticationServiceTest {
     when(userRepository.existsByEmail(request.getEmail())).thenReturn(true);
 
     // When & Then
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> authenticationService.register(request),
+    assertThrows(IllegalArgumentException.class, () -> authenticationService.register(request),
         "Email already exists");
 
     verify(userRepository, never()).save(any(UserEntity.class));
@@ -115,8 +110,8 @@ class AuthenticationServiceTest {
         LoginRequestDTO.builder().username("jdoe").password("password123").build();
 
     UserEntity userEntity = new UserEntity();
-    User domainUser =
-        User.builder().username("jdoe").email("jdoe@example.com").role(UserRole.USER).build();
+    User domainUser = User.builder().username("jdoe").email("jdoe@example.com")
+        .roles(new HashSet<>(Collections.singletonList(UserRole.USER))).build();
 
     when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(userEntity));
     when(userMapper.toDomain(userEntity)).thenReturn(domainUser);

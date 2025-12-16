@@ -2,7 +2,9 @@ package com.supermarket.auth.domain.model;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +31,7 @@ import lombok.Setter;
 public class User implements UserDetails {
 
   /** Unique identifier for the user. */
-  private Long id;
+  private UUID id;
 
   /** The username of the user. */
   private String username;
@@ -40,14 +42,8 @@ public class User implements UserDetails {
   /** The encrypted password of the user. */
   private String password;
 
-  /** The first name of the user. */
-  private String firstName;
-
-  /** The last name of the user. */
-  private String lastName;
-
-  /** The role assigned to the user (USER, ADMIN). */
-  private UserRole role;
+  /** The roles assigned to the user. */
+  private Set<UserRole> roles;
 
   /** Flag indicating if the user account is enabled. */
   private boolean enabled;
@@ -55,11 +51,29 @@ public class User implements UserDetails {
   /** Timestamp when the user was created. */
   private LocalDateTime createdAt;
 
-  /** Timestamp when the user was last updated. */
-  private LocalDateTime updatedAt;
-
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    return roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return enabled;
   }
 }

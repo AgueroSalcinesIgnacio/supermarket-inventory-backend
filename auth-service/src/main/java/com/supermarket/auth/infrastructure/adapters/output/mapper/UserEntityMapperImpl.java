@@ -1,7 +1,10 @@
 package com.supermarket.auth.infrastructure.adapters.output.mapper;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import com.supermarket.auth.domain.model.User;
+import com.supermarket.auth.infrastructure.adapters.output.entity.RoleEntity;
 import com.supermarket.auth.infrastructure.adapters.output.entity.UserEntity;
 
 /**
@@ -32,9 +35,11 @@ public class UserEntityMapperImpl {
     }
 
     return User.builder().id(entity.getId()).username(entity.getUsername()).email(entity.getEmail())
-        .password(entity.getPassword()).firstName(entity.getFirstName())
-        .lastName(entity.getLastName()).role(entity.getRole()).enabled(entity.isEnabled())
-        .createdAt(entity.getCreatedAt()).updatedAt(entity.getUpdatedAt()).build();
+        .password(entity.getPassword())
+        .roles(entity.getRoles() != null
+            ? entity.getRoles().stream().map(RoleEntity::getName).collect(Collectors.toSet())
+            : Collections.emptySet())
+        .enabled(entity.isEnabled()).createdAt(entity.getCreatedAt()).build();
   }
 
   /**
@@ -48,9 +53,13 @@ public class UserEntityMapperImpl {
       return null;
     }
 
-    return UserEntity.builder().id(user.getId()).username(user.getUsername()).email(user.getEmail())
-        .password(user.getPassword()).firstName(user.getFirstName()).lastName(user.getLastName())
-        .role(user.getRole()).enabled(user.isEnabled()).createdAt(user.getCreatedAt())
-        .updatedAt(user.getUpdatedAt()).build();
+    return UserEntity
+        .builder().id(user.getId()).username(
+            user.getUsername())
+        .email(user.getEmail()).password(user.getPassword())
+        .roles(user.getRoles() != null ? user.getRoles().stream()
+            .map(role -> RoleEntity.builder().id(role.getId()).name(role).build())
+            .collect(Collectors.toSet()) : Collections.emptySet())
+        .enabled(user.isEnabled()).createdAt(user.getCreatedAt()).build();
   }
 }
