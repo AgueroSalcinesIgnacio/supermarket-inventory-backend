@@ -20,6 +20,17 @@ services:
       timeout: 5s
       retries: 5
 
+  common-data-models:
+    build: ./common-data-models
+    image: common-data-models:latest
+    container_name: common-data-models-build
+    networks:
+      - supermarket-network
+    deploy:
+      mode: global # Ensures it's available, though it's just a build container
+      restart_policy:
+          condition: on-failure
+
   auth-service:
     build: ./auth-service
     container_name: auth-service
