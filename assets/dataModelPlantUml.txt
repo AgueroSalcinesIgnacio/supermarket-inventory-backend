@@ -1,0 +1,94 @@
+@startuml
+!theme spacelab
+
+title Table Schema: Persistence Isolation and CQRS
+
+' =========================================================================
+' 1. Auth DB - Used by Auth Service (MS 1)
+' =========================================================================
+database "Auth DB (Users & Security)" as DBAuth {
+  
+  entity "APP_USER" as T_User {
+    + id: UUID <<PK>>
+    --
+    * username: VARCHAR(255) <<Unique>>
+    password_hash: VARCHAR(255)
+    email: VARCHAR(255) <<Unique>>
+    is_enabled: BOOLEAN
+    created_at: TIMESTAMP
+  }
+  
+  entity "ROLE" as T_Role {
+    + id: INT <<PK>>
+    --
+    name: VARCHAR(50) <<Unique>>
+  }
+
+  entity "USER_ROLES" as T_UserRoles {
+    * user_id: UUID <<FK>>
+    * role_id: INT <<FK>>
+    --
+    <<PK>> (user_id, role_id)
+  }
+  
+  ' Relationships within DBAuth
+  T_User "1" -- "*" T_UserRoles : has
+  T_Role "*" -- "1" T_UserRoles : has
+
+}
+
+' =========================================================================
+' 2. Transactional DB (DBWrite) - Used by Inventory Command Service (MS 3)
+' =========================================================================
+database "DBWrite (Transactional)" as DBWrite {
+  
+  entity "PRODUCT" as T_Product {
+    + product_id: VARCHAR(255) <<PK>>
+    --
+    name: VARCHAR(255)
+    category: VARCHAR(100)
+    price: DECIMAL(10, 2)
+  }
+  
+  entity "INVENTORY" as T_Inventory {
+    + id: UUID <<PK>>
+    --
+    * product_id: VARCHAR(255) <<FK>>
+    --
+    stock_local: INTEGER
+    version: BIGINT
+    updated_at: TIMESTAMP
+  }
+  
+  entity "OUTBOX" as T_Outbox {
+    + id: UUID <<PK>>
+    --
+    occurred_on: TIMESTAMP
+    aggregate_type: VARCHAR 
+    aggregate_id: VARCHAR (product_id)
+    type: VARCHAR 
+    payload: JSONB
+    topic: VARCHAR
+  }
+  
+  ' Relationships within DBWrite
+  T_Product "1" -- "1" T_Inventory : has
+  T_Inventory "1" *-- "1" T_Outbox : atomic_write
+
+}
+
+' =========================================================================
+' 3. Query DB (DBRead) - Used by Inventory Query Service (MS 4)
+' =========================================================================
+database "DBRead (Projection)" as DBRead {
+  
+  entity "INVENTORY_PROJECTION" as T_Projection {
+    + product_id: VARCHAR(255) <<PK>>
+    --
+    product_name: VARCHAR(255)
+    current_stock: INTEGER
+    last_updated_by_event_id: VARCHAR
+  }
+}
+
+@enduml
