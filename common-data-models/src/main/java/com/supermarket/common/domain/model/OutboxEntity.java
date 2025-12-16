@@ -4,6 +4,8 @@ import java.time.Instant;
 import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -17,27 +19,26 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OutboxEntity implements java.io.Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class OutboxEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "occurred_on", nullable = false)
     private Instant occurredOn;
 
-    @Column(nullable = false)
+    @Column(name = "aggregate_type", nullable = false)
     private String aggregateType;
 
-    @Column(nullable = false)
+    @Column(name = "aggregate_id", nullable = false)
     private String aggregateId;
 
     @Column(nullable = false)
     private String type;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String payload;
+    @Column(name = "payload", columnDefinition = "jsonb", nullable = false)
+    private String payload; // Store the JSON payload as a String
 
     @Column(nullable = false)
     private String topic;

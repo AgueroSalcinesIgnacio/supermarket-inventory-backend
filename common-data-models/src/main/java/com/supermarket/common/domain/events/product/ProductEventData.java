@@ -1,4 +1,4 @@
-package com.supermarket.common.domain.events;
+package com.supermarket.common.domain.events.product;
 
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonProperty;

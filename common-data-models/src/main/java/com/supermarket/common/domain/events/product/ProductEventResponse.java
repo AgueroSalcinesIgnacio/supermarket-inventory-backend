@@ -1,4 +1,4 @@
-package com.supermarket.common.domain.events;
+package com.supermarket.common.domain.events.product;
 
 import com.supermarket.common.domain.model.ProductEntity;
 

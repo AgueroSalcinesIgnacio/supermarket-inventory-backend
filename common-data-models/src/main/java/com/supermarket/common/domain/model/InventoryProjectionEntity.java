@@ -15,9 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryProjectionEntity implements java.io.Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class InventoryProjectionEntity {
 
     @Id
     private String productId;

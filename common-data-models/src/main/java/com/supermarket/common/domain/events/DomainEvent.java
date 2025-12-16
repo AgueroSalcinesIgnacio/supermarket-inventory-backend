@@ -32,13 +32,17 @@ public abstract class DomainEvent implements Serializable {
     @JsonProperty("eventId")
     private UUID eventId = UUID.randomUUID();
 
-    /** Type of event (e.g., HOUSE_CREATED, HOUSE_UPDATED, HOUSE_DELETED) */
+    /** Type of event */
     @JsonProperty("eventType")
     private String eventType;
 
     /** Aggregrate ID that triggered the event */
     @JsonProperty("aggregateId")
     private String aggregateId;
+
+    /** Type of aggregate that triggered the event */
+    @JsonProperty("aggregateType")
+    private String aggregateType;
 
     /**
      * Returns the Kafka topic name for this event.

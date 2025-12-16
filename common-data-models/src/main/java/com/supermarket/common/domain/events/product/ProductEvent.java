@@ -1,7 +1,8 @@
-package com.supermarket.common.domain.events;
+package com.supermarket.common.domain.events.product;
 
 import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.supermarket.common.domain.events.DomainEvent;
 import com.supermarket.common.domain.model.ProductEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

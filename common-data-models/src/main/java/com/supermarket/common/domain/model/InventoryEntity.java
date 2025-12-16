@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryEntity implements java.io.Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class InventoryEntity {
 
     @Id
     private UUID id;
@@ -30,6 +29,7 @@ public class InventoryEntity implements java.io.Serializable {
     @Column(nullable = false)
     private Integer stockLocal;
 
+    @Version // JPA versioning for optimistic locking
     @Column(nullable = false)
     private Long version;
 
