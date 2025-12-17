@@ -3,6 +3,7 @@ package com.supermarket.inventory.infrastructure.adapters.output.ports;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -46,5 +47,20 @@ class ProductRepositoryPortImplTest {
         // Assert
         assertThat(result).isTrue();
         verify(productRepository).existsByCode(productId);
+    }
+
+    @Test
+    void findByCode_ShouldReturnProduct_WhenExists() {
+        // Arrange
+        String productCode = "prod-1";
+        when(productRepository.findByCode(productCode))
+                .thenReturn(Optional.of(ProductEntity.builder().code(productCode).build()));
+
+        // Act
+        ProductEntity result = productRepositoryPort.findByCode(productCode).get();
+
+        // Assert
+        assertThat(result).isNotNull();
+        verify(productRepository).findByCode(productCode);
     }
 }

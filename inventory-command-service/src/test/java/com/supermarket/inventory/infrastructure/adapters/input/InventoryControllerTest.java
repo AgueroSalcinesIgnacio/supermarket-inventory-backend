@@ -16,6 +16,7 @@ import com.supermarket.inventory.application.service.InventoryService;
 import com.supermarket.inventory.infrastructure.adapters.input.dto.CreateProductRequest;
 import com.supermarket.inventory.infrastructure.adapters.input.dto.ProcessOrderRequest;
 import com.supermarket.inventory.infrastructure.adapters.input.dto.ReceiveShipmentRequest;
+import com.supermarket.inventory.infrastructure.config.security.JwtService;
 import com.supermarket.inventory.utils.TestUtils;
 
 @WebMvcTest(InventoryController.class)
@@ -27,6 +28,9 @@ class InventoryControllerTest {
 
     @MockBean
     private InventoryService inventoryService;
+
+    @MockBean
+    private JwtService jwtService;
 
 
     @Autowired

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supermarket.common.domain.model.InventoryEntity;
 import com.supermarket.common.domain.model.OutboxEntity;
 import com.supermarket.common.domain.model.ProductEntity;
+import com.supermarket.inventory.domain.exception.InventoryNotFoundException;
 import com.supermarket.inventory.domain.exception.ProductAlreadyExistsException;
 import com.supermarket.inventory.domain.exception.ProductNotFoundException;
 import com.supermarket.inventory.domain.ports.output.InventoryRepositoryPort;
@@ -93,7 +95,7 @@ class InventoryServiceTest {
     void processOrder_ShouldThrowException_WhenInventoryNotFound() {
         // Arrange
         String productCode = "prod-1";
-        java.util.UUID productId = java.util.UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
 
         ProcessOrderRequest request = new ProcessOrderRequest();
         request.setProductCode(productCode);
@@ -109,11 +111,12 @@ class InventoryServiceTest {
                 .isInstanceOf(RuntimeException.class).hasMessageContaining("Not enough stock");
     }
 
+
     @Test
     void processOrder_ShouldThrowException_WhenStockInsufficient() {
         // Arrange
         String productCode = "prod-1";
-        java.util.UUID productId = java.util.UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
 
         ProcessOrderRequest request = new ProcessOrderRequest();
         request.setProductCode(productCode);
@@ -135,7 +138,7 @@ class InventoryServiceTest {
     void receiveShipment_ShouldSucceed_WhenProductExists() throws JsonProcessingException {
         // Arrange
         String productCode = "prod-1";
-        java.util.UUID productId = java.util.UUID.randomUUID();
+        UUID productId = UUID.randomUUID();
 
         int quantity = 10;
         int initialStock = 5;
@@ -174,6 +177,28 @@ class InventoryServiceTest {
         // Act & Assert
         assertThatThrownBy(() -> inventoryService.receiveShipment(request))
                 .isInstanceOf(ProductNotFoundException.class);
+    }
+
+    @Test
+    void receiveShipment_ShouldThrowException_WhenInventoryNotFound() {
+        // Arrange
+        String productCode = "prod-1";
+        UUID productId = UUID.randomUUID();
+
+        int quantity = 10;
+
+        ReceiveShipmentRequest request = new ReceiveShipmentRequest();
+        request.setProductCode(productCode);
+        request.setQuantity(quantity);
+
+        ProductEntity product = ProductEntity.builder().id(productId).code(productCode).build();
+
+        when(productRepository.findByCode(productCode)).thenReturn(Optional.of(product));
+        when(inventoryRepository.findByProductId(productId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThatThrownBy(() -> inventoryService.receiveShipment(request))
+                .isInstanceOf(InventoryNotFoundException.class);
     }
 
     @Test

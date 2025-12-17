@@ -9,6 +9,7 @@ import com.supermarket.common.domain.events.inventory.InventoryEvent;
 import com.supermarket.common.domain.model.InventoryEntity;
 import com.supermarket.common.domain.model.OutboxEntity;
 import com.supermarket.common.domain.model.ProductEntity;
+import com.supermarket.inventory.domain.exception.InventoryNotFoundException;
 import com.supermarket.inventory.domain.exception.ProductAlreadyExistsException;
 import com.supermarket.inventory.domain.exception.ProductNotFoundException;
 import com.supermarket.inventory.domain.ports.output.InventoryRepositoryPort;
@@ -81,7 +82,7 @@ public class InventoryService {
                                 .orElseThrow(() -> new ProductNotFoundException());
 
                 InventoryEntity inventory = inventoryRepository.findByProductId(product.getId())
-                                .orElseThrow(() -> new ProductNotFoundException());
+                                .orElseThrow(() -> new InventoryNotFoundException());
 
                 // 2. Update stock
                 inventory.setStockLocal(inventory.getStockLocal() + request.getQuantity());
