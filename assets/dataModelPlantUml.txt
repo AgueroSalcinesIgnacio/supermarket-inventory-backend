@@ -8,7 +8,7 @@ title Table Schema: Persistence Isolation and CQRS
 ' =========================================================================
 database "Auth DB (Users & Security)" as DBAuth {
   
-  entity "APP_USER" as T_User {
+  entity "USERS" as T_User {
     + id: UUID <<PK>>
     --
     * username: VARCHAR(255) <<Unique>>
@@ -18,7 +18,7 @@ database "Auth DB (Users & Security)" as DBAuth {
     created_at: TIMESTAMP
   }
   
-  entity "ROLE" as T_Role {
+  entity "ROLES" as T_Role {
     + id: INT <<PK>>
     --
     name: VARCHAR(50) <<Unique>>
@@ -42,9 +42,10 @@ database "Auth DB (Users & Security)" as DBAuth {
 ' =========================================================================
 database "DBWrite (Transactional)" as DBWrite {
   
-  entity "PRODUCT" as T_Product {
-    + product_id: VARCHAR(255) <<PK>>
+  entity "PRODUCTS" as T_Product {
+    + id: UUID <<PK>>
     --
+    * code: VARCHAR(255) <<Unique>>
     name: VARCHAR(255)
     category: VARCHAR(100)
     price: DECIMAL(10, 2)
@@ -53,7 +54,7 @@ database "DBWrite (Transactional)" as DBWrite {
   entity "INVENTORY" as T_Inventory {
     + id: UUID <<PK>>
     --
-    * product_id: VARCHAR(255) <<FK>>
+    * product_id: UUID <<FK>>
     --
     stock_local: INTEGER
     version: BIGINT
