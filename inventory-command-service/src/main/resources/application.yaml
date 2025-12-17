@@ -1,4 +1,6 @@
----
 spring:
   application:
     name: "inventory-command-service"
+
+jwt:
+  public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAidRGCEvj+QFc1oFAZ0zOJit+mrzUSbdyye0smKxxt51kp5vCUnsbGSzgSOij5MwuHNqc9BDMOSY5r64WnePmFQ1bA3mBRyGGjCMXea/oV9dneqnxTHt23a4JJIkZnSmbhq/ALJgeCyrdk+WKfSX+pch4IVZxwhRRHZ4KU0SUwA1bInrcKDGiN3kd974zhQQYxroYKFOPt6GvecnqPz9Q+A9wDORIrKsZOvO+3yFfSCDHNq/ePBpXykcF9Kh70BYHO+aYNkQmcFHhvtujxbybOpUbZ3MlGWE9c9HAoRkpv/Aq5h8vrgMBRG3HrsijLM+ZVklP86i1DGBDrJQegdS7FQIDAQAB"

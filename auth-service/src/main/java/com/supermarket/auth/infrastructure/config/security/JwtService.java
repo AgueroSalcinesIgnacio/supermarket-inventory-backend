@@ -4,14 +4,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 
 /**
  * Service for JWT token operations.
@@ -26,9 +24,13 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-  /** Secret key used for signing JWT tokens. */
-  @Value("${jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
-  private String secretKey;
+  /** Private key used for signing JWT tokens. */
+  @Value("${jwt.private-key}")
+  private String privateKey;
+
+  /** Public key used for verifying JWT tokens. */
+  @Value("${jwt.public-key}")
+  private String publicKey;
 
   /** Expiration time for JWT tokens in milliseconds. */
   @Value("${jwt.expiration:86400000}") // 24 hours in milliseconds
@@ -91,7 +93,7 @@ public class JwtService {
     return Jwts.builder().claims(extraClaims).subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + expiration))
-        .signWith(getSignInKey(), Jwts.SIG.HS256).compact();
+        .signWith(getSignInKey(), Jwts.SIG.RS256).compact();
   }
 
   /**
@@ -133,16 +135,40 @@ public class JwtService {
    * @return all claims
    */
   private Claims extractAllClaims(String token) {
-    return Jwts.parser().verifyWith(getSignInKey()).build().parseSignedClaims(token).getPayload();
+    return Jwts.parser().verifyWith(getVerifyKey()).build().parseSignedClaims(token).getPayload();
   }
 
   /**
-   * Gets the signing key for JWT operations.
+   * Gets the signing key (Private Key) for JWT operations.
    *
    * @return the signing key
    */
-  private SecretKey getSignInKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-    return Keys.hmacShaKeyFor(keyBytes);
+  private java.security.PrivateKey getSignInKey() {
+    try {
+      byte[] keyBytes = Decoders.BASE64.decode(privateKey);
+      java.security.spec.PKCS8EncodedKeySpec spec =
+          new java.security.spec.PKCS8EncodedKeySpec(keyBytes);
+      java.security.KeyFactory kf = java.security.KeyFactory.getInstance("RSA");
+      return kf.generatePrivate(spec);
+    } catch (Exception e) {
+      throw new RuntimeException("Error loading private key", e);
+    }
+  }
+
+  /**
+   * Gets the verification key (Public Key) for JWT operations.
+   *
+   * @return the verification key
+   */
+  private java.security.PublicKey getVerifyKey() {
+    try {
+      byte[] keyBytes = Decoders.BASE64.decode(publicKey);
+      java.security.spec.X509EncodedKeySpec spec =
+          new java.security.spec.X509EncodedKeySpec(keyBytes);
+      java.security.KeyFactory kf = java.security.KeyFactory.getInstance("RSA");
+      return kf.generatePublic(spec);
+    } catch (Exception e) {
+      throw new RuntimeException("Error loading public key", e);
+    }
   }
 }

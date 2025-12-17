@@ -62,6 +62,19 @@ To simplify the setup, compilation, and presentation of this technical exercise,
 **The goal is to maintain the simplicity of the build process while rigorously demonstrating the required architectural patterns within the code.**
 
 ---
+## 3.5. Security: Asymmetric JWT (RS256)
+
+Security is implemented using **asymmetric cryptography** with the **RS256** algorithm to ensure secure, stateless authentication without sharing private secrets between services.
+
+1.  **Auth Service (Identity Provider):**
+    *   Holds the **Private Key**.
+    *   Generates and signs JWT tokens for authenticated users using this private key.
+2.  **Resource Services (e.g., Inventory Command Service):**
+    *   Hold the **Public Key**.
+    *   Statelessly validate incoming JWT tokens using the public key.
+    *   This ensures that only the Auth Service can mint valid tokens, while any other service can verify them without needing to contact the Auth Service or share the signing secret.
+
+---
 
 ## 4. Service Structure and Responsibilities (Final Naming)
 

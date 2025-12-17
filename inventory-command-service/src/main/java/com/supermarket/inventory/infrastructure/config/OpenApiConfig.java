@@ -37,8 +37,16 @@ public class OpenApiConfig {
    */
   @Bean
   public OpenAPI customOpenAPI() {
-    return new OpenAPI().info(new Info().title("Inventory Service API").version("v1")
-        .description("API for Inventory service")
-        .contact(new Contact().name("Supermarket Team").email("test@example.com")));
+    final String securitySchemeName = "bearerAuth";
+    return new OpenAPI()
+        .addSecurityItem(
+            new io.swagger.v3.oas.models.security.SecurityRequirement().addList(securitySchemeName))
+        .components(new io.swagger.v3.oas.models.Components().addSecuritySchemes(securitySchemeName,
+            new io.swagger.v3.oas.models.security.SecurityScheme().name(securitySchemeName)
+                .type(io.swagger.v3.oas.models.security.SecurityScheme.Type.HTTP).scheme("bearer")
+                .bearerFormat("JWT")))
+        .info(new Info().title("Inventory Command Service API").version("v1")
+            .description("API for Inventory Command Service")
+            .contact(new Contact().name("Supermarket Team").email("test@example.com")));
   }
 }
