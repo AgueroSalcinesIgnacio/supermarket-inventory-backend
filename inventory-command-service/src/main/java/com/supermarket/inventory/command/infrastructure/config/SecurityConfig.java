@@ -9,14 +9,17 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.supermarket.inventory.command.infrastructure.config.security.JwtAuthenticationFilter;
+
 import lombok.RequiredArgsConstructor;
 
 /**
  * Spring Security configuration for the application.
  *
  * <p>
- * This configuration sets up JWT-based authentication with the following features:
+ * This configuration sets up JWT-based authentication with the following
+ * features:
  *
  * <ul>
  * <li>Stateless session management (no server-side sessions)
@@ -35,28 +38,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
-  /**
-   * Configures the security filter chain.
-   *
-   * @param http the HttpSecurity to configure
-   * @return the configured SecurityFilterChain
-   * @throws Exception if an error occurs during configuration
-   */
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
-        // Public endpoints ("/api/inventory/**" will be secured)
-        .requestMatchers("/actuator/**").permitAll()
-        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-        // Protected endpoints
-        .anyRequest().authenticated())
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http
+     *            the HttpSecurity to configure
+     * @return the configured SecurityFilterChain
+     * @throws Exception
+     *             if an error occurs during configuration
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
+                // Public endpoints ("/api/inventory/**" will be secured)
+                .requestMatchers("/actuator/**").permitAll().requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                .permitAll()
+                // Protected endpoints
+                .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
-  }
+        return http.build();
+    }
 
 }

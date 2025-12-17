@@ -1,10 +1,13 @@
 package com.supermarket.inventory.command.infrastructure.adapters.output.ports;
 
 import java.util.Objects;
+
 import org.springframework.stereotype.Component;
+
 import com.supermarket.common.domain.model.ProductEntity;
 import com.supermarket.inventory.command.domain.ports.output.ProductRepositoryPort;
 import com.supermarket.inventory.command.infrastructure.adapters.output.ports.repository.ProductRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Component

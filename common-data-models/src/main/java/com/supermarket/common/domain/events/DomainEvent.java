@@ -3,7 +3,9 @@ package com.supermarket.common.domain.events;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,9 +14,9 @@ import lombok.NoArgsConstructor;
  * Base class for all domain events in the housing application.
  *
  * <p>
- * This abstract class defines the common structure for all domain events that are published to
- * Kafka. Each event includes a timestamp and event type information for proper event sourcing and
- * audit trails.
+ * This abstract class defines the common structure for all domain events that
+ * are published to Kafka. Each event includes a timestamp and event type
+ * information for proper event sourcing and audit trails.
  *
  * @author Ignacio Agüero Salcines
  * @since 1.0

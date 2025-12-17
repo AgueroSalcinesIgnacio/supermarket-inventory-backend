@@ -1,10 +1,11 @@
+---
 spring:
   datasource:
     url: "jdbc:postgresql://localhost:5432/inventory_write"
     username: "postgres"
     password: "password"
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: "org.postgresql.Driver"
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: "org.hibernate.dialect.PostgreSQLDialect"
     hibernate:
       ddl-auto: "update"

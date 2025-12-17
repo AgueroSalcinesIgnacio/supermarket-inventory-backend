@@ -1,17 +1,20 @@
 package com.supermarket.inventory.command.infrastructure.adapters.input;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.supermarket.inventory.command.application.service.InventoryService;
 import com.supermarket.inventory.command.infrastructure.adapters.input.dto.CreateProductRequest;
 import com.supermarket.inventory.command.infrastructure.adapters.input.dto.ProcessOrderRequest;
 import com.supermarket.inventory.command.infrastructure.adapters.input.dto.ReceiveShipmentRequest;
-import jakarta.validation.Valid;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

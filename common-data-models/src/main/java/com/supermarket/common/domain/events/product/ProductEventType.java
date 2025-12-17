@@ -4,8 +4,8 @@ package com.supermarket.common.domain.events.product;
  * Constants for house event types.
  *
  * <p>
- * Defines all possible event types for house domain operations. Using constants instead of string
- * literals prevents typos and improves maintainability.
+ * Defines all possible event types for house domain operations. Using constants
+ * instead of string literals prevents typos and improves maintainability.
  *
  * @author Ignacio Agüero Salcines
  * @since 1.0

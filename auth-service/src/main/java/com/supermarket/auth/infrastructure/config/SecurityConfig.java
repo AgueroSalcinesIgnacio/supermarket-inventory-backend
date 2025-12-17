@@ -16,14 +16,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import com.supermarket.auth.infrastructure.config.security.JwtAuthenticationFilter;
+
 import lombok.RequiredArgsConstructor;
 
 /**
  * Spring Security configuration for the application.
  *
  * <p>
- * This configuration sets up JWT-based authentication with the following features:
+ * This configuration sets up JWT-based authentication with the following
+ * features:
  *
  * <ul>
  * <li>Stateless session management (no server-side sessions)
@@ -42,68 +45,70 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  /** Filter to handle JWT authentication for requests. */
-  private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    /** Filter to handle JWT authentication for requests. */
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  /** Service to load user details from the database. */
-  private final UserDetailsService userDetailsService;
+    /** Service to load user details from the database. */
+    private final UserDetailsService userDetailsService;
 
-  /**
-   * Configures the security filter chain.
-   *
-   * @param http the HttpSecurity to configure
-   * @return the configured SecurityFilterChain
-   * @throws Exception if an error occurs during configuration
-   */
-  @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
-        // Public endpoints
-        .requestMatchers("/api/auth/**").permitAll().requestMatchers("/actuator/**").permitAll()
-        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-        // Protected endpoints
-        .anyRequest().authenticated())
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider())
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http
+     *            the HttpSecurity to configure
+     * @return the configured SecurityFilterChain
+     * @throws Exception
+     *             if an error occurs during configuration
+     */
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
+                // Public endpoints
+                .requestMatchers("/api/auth/**").permitAll().requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                // Protected endpoints
+                .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-    return http.build();
-  }
+        return http.build();
+    }
 
-  /**
-   * Creates the authentication provider using DAO authentication.
-   *
-   * @return configured DaoAuthenticationProvider
-   */
-  @Bean
-  public AuthenticationProvider authenticationProvider() {
-    var authProvider = new DaoAuthenticationProvider();
-    authProvider.setPasswordEncoder(passwordEncoder());
-    authProvider.setUserDetailsService(userDetailsService);
-    return authProvider;
-  }
+    /**
+     * Creates the authentication provider using DAO authentication.
+     *
+     * @return configured DaoAuthenticationProvider
+     */
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        var authProvider = new DaoAuthenticationProvider();
+        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setUserDetailsService(userDetailsService);
+        return authProvider;
+    }
 
-  /**
-   * Provides the authentication manager bean.
-   *
-   * @param config the authentication configuration
-   * @return the AuthenticationManager
-   * @throws Exception if an error occurs
-   */
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception {
-    return config.getAuthenticationManager();
-  }
+    /**
+     * Provides the authentication manager bean.
+     *
+     * @param config
+     *            the authentication configuration
+     * @return the AuthenticationManager
+     * @throws Exception
+     *             if an error occurs
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 
-  /**
-   * Provides BCrypt password encoder.
-   *
-   * @return BCryptPasswordEncoder instance
-   */
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    /**
+     * Provides BCrypt password encoder.
+     *
+     * @return BCryptPasswordEncoder instance
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

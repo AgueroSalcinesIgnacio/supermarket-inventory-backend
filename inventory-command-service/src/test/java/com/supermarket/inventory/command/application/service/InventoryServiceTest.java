@@ -5,14 +5,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.supermarket.common.domain.model.InventoryEntity;
@@ -60,8 +63,7 @@ class InventoryServiceTest {
         request.setQuantity(quantity);
 
         ProductEntity product = ProductEntity.builder().id(productId).code(productCode).build();
-        InventoryEntity inventory =
-                InventoryEntity.builder().productId(productId).stockLocal(initialStock).build();
+        InventoryEntity inventory = InventoryEntity.builder().productId(productId).stockLocal(initialStock).build();
 
         when(productRepository.findByCode(productCode)).thenReturn(Optional.of(product));
         when(inventoryRepository.findByProductId(productId)).thenReturn(Optional.of(inventory));
@@ -87,8 +89,7 @@ class InventoryServiceTest {
         when(productRepository.findByCode(productCode)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThatThrownBy(() -> inventoryService.processOrder(request))
-                .isInstanceOf(ProductNotFoundException.class);
+        assertThatThrownBy(() -> inventoryService.processOrder(request)).isInstanceOf(ProductNotFoundException.class);
     }
 
     @Test
@@ -107,10 +108,9 @@ class InventoryServiceTest {
         when(inventoryRepository.findByProductId(productId)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThatThrownBy(() -> inventoryService.processOrder(request))
-                .isInstanceOf(RuntimeException.class).hasMessageContaining("Not enough stock");
+        assertThatThrownBy(() -> inventoryService.processOrder(request)).isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Not enough stock");
     }
-
 
     @Test
     void processOrder_ShouldThrowException_WhenStockInsufficient() {
@@ -123,15 +123,14 @@ class InventoryServiceTest {
         request.setQuantity(10);
 
         ProductEntity product = ProductEntity.builder().id(productId).code(productCode).build();
-        InventoryEntity inventory =
-                InventoryEntity.builder().productId(productId).stockLocal(5).build();
+        InventoryEntity inventory = InventoryEntity.builder().productId(productId).stockLocal(5).build();
 
         when(productRepository.findByCode(productCode)).thenReturn(Optional.of(product));
         when(inventoryRepository.findByProductId(productId)).thenReturn(Optional.of(inventory));
 
         // Act & Assert
-        assertThatThrownBy(() -> inventoryService.processOrder(request))
-                .isInstanceOf(RuntimeException.class).hasMessageContaining("Not enough stock");
+        assertThatThrownBy(() -> inventoryService.processOrder(request)).isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Not enough stock");
     }
 
     @Test
@@ -148,8 +147,7 @@ class InventoryServiceTest {
         request.setQuantity(quantity);
 
         ProductEntity product = ProductEntity.builder().id(productId).code(productCode).build();
-        InventoryEntity inventory =
-                InventoryEntity.builder().productId(productId).stockLocal(initialStock).build();
+        InventoryEntity inventory = InventoryEntity.builder().productId(productId).stockLocal(initialStock).build();
 
         when(productRepository.findByCode(productCode)).thenReturn(Optional.of(product));
         when(inventoryRepository.findByProductId(productId)).thenReturn(Optional.of(inventory));
@@ -214,8 +212,7 @@ class InventoryServiceTest {
         request.setPrice(BigDecimal.TEN);
 
         ProductEntity product = ProductEntity.builder().id(productId).code(productCode).build();
-        InventoryEntity inventory =
-                InventoryEntity.builder().productId(productId).stockLocal(0).build();
+        InventoryEntity inventory = InventoryEntity.builder().productId(productId).stockLocal(0).build();
 
         when(productRepository.existsByCode(productCode)).thenReturn(false);
         when(productRepository.save(any(ProductEntity.class))).thenReturn(product);

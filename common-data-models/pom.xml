@@ -1,69 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.supermarket</groupId>
-	<artifactId>common</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>common</name>
-	<description>Demo project for Spring Boot</description>
-	
-	<properties>
-		<java.version>21</java.version>
-		<spotless.version>2.43.0</spotless.version>
-		<maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.3.1</version>
+    <relativePath/>
+    <!-- lookup parent from repository -->
+  </parent>
+  <groupId>com.supermarket</groupId>
+  <artifactId>common</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>common</name>
+  <description>Demo project for Spring Boot</description>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+  <properties>
+    <java.version>21</java.version>
+    <spotless.version>2.43.0</spotless.version>
+    <maven-javadoc-plugin.version>3.6.3</maven-javadoc-plugin.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
 
-		 <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-	<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-	</dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-	<build>
-		<plugins>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+  </dependencies>
 
-			  <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                </plugin>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>${spotless.version}</version>
-                </plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+
+      <!-- Maven JavaDoc plugin for generating API documentation -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <source>21</source>
+          <target>21</target>
+          <docencoding>UTF-8</docencoding>
+          <encoding>UTF-8</encoding>
+          <charset>UTF-8</charset>
+          <reportOutputDirectory>${project.build.directory}/javadoc</reportOutputDirectory>
+          <destDir>javadoc</destDir>
+          <excludePackageNames>*.config.*,*.entity.*,*.mapper.*</excludePackageNames>
+          <links>
+            <link>https://docs.oracle.com/en/java/javase/21/docs/api/</link>
+          </links>
+          <nohelp>false</nohelp>
+          <doclint>none</doclint>
+          <validateLinks>false</validateLinks>
+        </configuration>
+        <executions>
+          <execution>
+            <id>generate-javadoc</id>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Spotless Maven Plugin for code formatting -->
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <version>${spotless.version}</version>
+        <configuration>
+          <java>
+            <includes>
+              <include>src/main/java/**/*.java</include>
+              <include>src/test/java/**/*.java</include>
+            </includes>
+            <eclipse>
+              <version>4.31</version>
+            </eclipse>
+            <importOrder>
+              <order>java,javax,jakarta,org,com</order>
+            </importOrder>
+            <removeUnusedImports/>
+            <trimTrailingWhitespace/>
+            <endWithNewline/>
+            <indent>
+              <tabs>false</tabs>
+              <spaces>true</spaces>
+              <spacesPerTab>4</spacesPerTab>
+            </indent>
+          </java>
+          <pom>
+            <includes>
+              <include>pom.xml</include>
+            </includes>
+            <sortPom>
+              <expandEmptyElements>false</expandEmptyElements>
+            </sortPom>
+          </pom>
+          <yaml>
+            <includes>
+              <include>src/**/*.yaml</include>
+              <include>src/**/*.yml</include>
+            </includes>
+            <jackson/>
+          </yaml>
+        </configuration>
+        <executions>
+          <execution>
+            <id>spotless-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>verify</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

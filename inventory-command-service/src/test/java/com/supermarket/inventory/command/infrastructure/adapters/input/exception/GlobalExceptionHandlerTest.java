@@ -3,13 +3,16 @@ package com.supermarket.inventory.command.infrastructure.adapters.input.exceptio
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import com.supermarket.inventory.command.infrastructure.adapters.input.exception.GlobalExceptionHandler.ValidationErrorResponse;
 
 class GlobalExceptionHandlerTest {
@@ -27,8 +30,7 @@ class GlobalExceptionHandlerTest {
         when(bindingResult.getAllErrors()).thenReturn(List.of(fieldError));
 
         // Act
-        ResponseEntity<ValidationErrorResponse> response =
-                globalExceptionHandler.handleValidationExceptions(ex);
+        ResponseEntity<ValidationErrorResponse> response = globalExceptionHandler.handleValidationExceptions(ex);
 
         // Assert
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

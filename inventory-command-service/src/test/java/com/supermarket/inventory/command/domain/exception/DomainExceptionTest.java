@@ -1,6 +1,7 @@
 package com.supermarket.inventory.command.domain.exception;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
 
 class DomainExceptionTest {

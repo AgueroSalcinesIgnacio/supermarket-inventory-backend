@@ -4,14 +4,14 @@ import com.supermarket.common.domain.model.ProductEntity;
 
 /**
  * Interface for the product repository port.
- * 
+ *
  * @author Ignacio Agüero Salcines
  */
 public interface ProductRepositoryPort {
 
     /**
      * Checks if a product with the given code exists in the repository.
-     * 
+     *
      * @param code
      * @return
      */
@@ -19,7 +19,7 @@ public interface ProductRepositoryPort {
 
     /**
      * Saves the given product in the repository.
-     * 
+     *
      * @param product
      * @return
      */
@@ -27,7 +27,7 @@ public interface ProductRepositoryPort {
 
     /**
      * Finds a product by its code.
-     * 
+     *
      * @param code
      * @return
      */

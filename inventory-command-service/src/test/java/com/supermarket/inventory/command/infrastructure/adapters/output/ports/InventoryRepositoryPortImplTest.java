@@ -1,12 +1,15 @@
 package com.supermarket.inventory.command.infrastructure.adapters.output.ports;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
+
 import com.supermarket.common.domain.model.InventoryEntity;
 
 @DataJpaTest
@@ -23,8 +26,7 @@ class InventoryRepositoryPortImplTest {
     void findByProductId_ShouldReturnInventory_WhenFound() {
         // Arrange
         java.util.UUID productId = java.util.UUID.randomUUID();
-        InventoryEntity inventory =
-                InventoryEntity.builder().productId(productId).stockLocal(10).version(0L).build();
+        InventoryEntity inventory = InventoryEntity.builder().productId(productId).stockLocal(10).version(0L).build();
 
         entityManager.persistAndFlush(inventory);
 
@@ -40,8 +42,7 @@ class InventoryRepositoryPortImplTest {
     @Test
     void findByProductId_ShouldReturnEmpty_WhenNotFound() {
         // Act
-        Optional<InventoryEntity> result =
-                inventoryRepositoryPort.findByProductId(java.util.UUID.randomUUID());
+        Optional<InventoryEntity> result = inventoryRepositoryPort.findByProductId(java.util.UUID.randomUUID());
 
         // Assert
         assertThat(result).isEmpty();
@@ -51,8 +52,7 @@ class InventoryRepositoryPortImplTest {
     void save_ShouldSaveInventory() {
         // Arrange
         java.util.UUID productId = java.util.UUID.randomUUID();
-        InventoryEntity inventory =
-                InventoryEntity.builder().productId(productId).stockLocal(5).version(0L).build();
+        InventoryEntity inventory = InventoryEntity.builder().productId(productId).stockLocal(5).version(0L).build();
 
         // Act
         InventoryEntity savedInventory = inventoryRepositoryPort.save(inventory);

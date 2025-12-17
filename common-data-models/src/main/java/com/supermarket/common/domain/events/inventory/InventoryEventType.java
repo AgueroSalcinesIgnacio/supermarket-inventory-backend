@@ -4,8 +4,9 @@ package com.supermarket.common.domain.events.inventory;
  * Constants for inventory event types.
  *
  * <p>
- * Defines all possible event types for inventory domain operations. Using constants instead of
- * string literals prevents typos and improves maintainability.
+ * Defines all possible event types for inventory domain operations. Using
+ * constants instead of string literals prevents typos and improves
+ * maintainability.
  *
  * @author Ignacio Agüero Salcines
  * @since 1.0

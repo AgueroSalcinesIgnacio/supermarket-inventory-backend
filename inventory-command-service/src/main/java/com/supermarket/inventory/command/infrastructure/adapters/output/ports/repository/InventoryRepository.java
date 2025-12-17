@@ -2,8 +2,10 @@ package com.supermarket.inventory.command.infrastructure.adapters.output.ports.r
 
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import com.supermarket.common.domain.model.InventoryEntity;
 
 /**
@@ -15,14 +17,13 @@ import com.supermarket.common.domain.model.InventoryEntity;
 @Repository
 public interface InventoryRepository extends JpaRepository<InventoryEntity, UUID> {
 
-  /**
-   * Finds an inventory by productId.
-   *
-   * @param productId the productId
-   * @return Optional containing the inventory if found
-   */
-  Optional<InventoryEntity> findByProductId(UUID productId);
-
-
+    /**
+     * Finds an inventory by productId.
+     *
+     * @param productId
+     *            the productId
+     * @return Optional containing the inventory if found
+     */
+    Optional<InventoryEntity> findByProductId(UUID productId);
 
 }

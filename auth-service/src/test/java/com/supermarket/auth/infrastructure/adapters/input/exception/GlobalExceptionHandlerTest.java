@@ -17,40 +17,40 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 class GlobalExceptionHandlerTest {
 
-  private final GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
+    private final GlobalExceptionHandler exceptionHandler = new GlobalExceptionHandler();
 
-  @Test
-  void handleValidationExceptions_ShouldReturnBadRequestWithErrors() {
-    MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
-    BindingResult bindingResult = mock(BindingResult.class);
-    FieldError fieldError = new FieldError("objectName", "fieldName", "error message");
+    @Test
+    void handleValidationExceptions_ShouldReturnBadRequestWithErrors() {
+        MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        FieldError fieldError = new FieldError("objectName", "fieldName", "error message");
 
-    when(ex.getBindingResult()).thenReturn(bindingResult);
-    when(bindingResult.getAllErrors()).thenReturn(List.of(fieldError));
+        when(ex.getBindingResult()).thenReturn(bindingResult);
+        when(bindingResult.getAllErrors()).thenReturn(List.of(fieldError));
 
-    ResponseEntity<GlobalExceptionHandler.ValidationErrorResponse> response =
-        exceptionHandler.handleValidationExceptions(ex);
+        ResponseEntity<GlobalExceptionHandler.ValidationErrorResponse> response = exceptionHandler
+                .handleValidationExceptions(ex);
 
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    assertNotNull(response.getBody());
-    assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().status());
-    assertEquals("Validation Failed", response.getBody().message());
-    assertEquals("error message", response.getBody().errors().get("fieldName"));
-  }
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getBody().status());
+        assertEquals("Validation Failed", response.getBody().message());
+        assertEquals("error message", response.getBody().errors().get("fieldName"));
+    }
 
-  @Test
-  void handleValidationExceptions_ShouldReturnBadRequestWithEmptyErrors_WhenNoErrors() {
-    MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
-    BindingResult bindingResult = mock(BindingResult.class);
+    @Test
+    void handleValidationExceptions_ShouldReturnBadRequestWithEmptyErrors_WhenNoErrors() {
+        MethodArgumentNotValidException ex = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
 
-    when(ex.getBindingResult()).thenReturn(bindingResult);
-    when(bindingResult.getAllErrors()).thenReturn(Collections.emptyList());
+        when(ex.getBindingResult()).thenReturn(bindingResult);
+        when(bindingResult.getAllErrors()).thenReturn(Collections.emptyList());
 
-    ResponseEntity<GlobalExceptionHandler.ValidationErrorResponse> response =
-        exceptionHandler.handleValidationExceptions(ex);
+        ResponseEntity<GlobalExceptionHandler.ValidationErrorResponse> response = exceptionHandler
+                .handleValidationExceptions(ex);
 
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    assertNotNull(response.getBody());
-    assertEquals(0, response.getBody().errors().size());
-  }
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().errors().size());
+    }
 }

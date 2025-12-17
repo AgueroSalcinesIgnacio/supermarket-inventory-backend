@@ -11,10 +11,11 @@ import com.supermarket.auth.infrastructure.adapters.input.AuthController;
 @SpringBootTest
 class AuthApplicationTests {
 
-  @Autowired private AuthController authController;
+    @Autowired
+    private AuthController authController;
 
-  @Test
-  void contextLoads() {
-    assertNotNull(authController);
-  }
+    @Test
+    void contextLoads() {
+        assertNotNull(authController);
+    }
 }

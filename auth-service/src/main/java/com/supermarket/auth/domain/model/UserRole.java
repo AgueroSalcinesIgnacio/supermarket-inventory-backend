@@ -10,19 +10,19 @@ package com.supermarket.auth.domain.model;
  * @since 1.0
  */
 public enum UserRole {
-  /** Standard user role with basic permissions. */
-  USER(1),
+    /** Standard user role with basic permissions. */
+    USER(1),
 
-  /** Administrative user role with full system access. */
-  ADMIN(2);
+    /** Administrative user role with full system access. */
+    ADMIN(2);
 
-  private final int id;
+    private final int id;
 
-  UserRole(int id) {
-    this.id = id;
-  }
+    UserRole(int id) {
+        this.id = id;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 }

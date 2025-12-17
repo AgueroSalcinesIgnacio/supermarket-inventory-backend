@@ -2,15 +2,19 @@ package com.supermarket.inventory.command.infrastructure.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.util.Base64;
 import java.util.Date;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import com.supermarket.inventory.command.infrastructure.config.security.JwtService;
+
 import io.jsonwebtoken.Jwts;
 
 public class JwtServiceTest {
@@ -52,12 +56,11 @@ public class JwtServiceTest {
     void extractAllClaims_ShouldThrowException_WhenSignatureIsInvalid() throws Exception {
         // Arrange
         KeyPair otherKeyPair = KeyPairGenerator.getInstance("RSA").generateKeyPair();
-        String tokenConOtraFirma = Jwts.builder().subject("hacker")
-                .signWith(otherKeyPair.getPrivate(), Jwts.SIG.RS256).compact();
+        String tokenConOtraFirma = Jwts.builder().subject("hacker").signWith(otherKeyPair.getPrivate(), Jwts.SIG.RS256)
+                .compact();
 
         // Act & Assert
-        assertThatThrownBy(() -> jwtService.extractUsername(tokenConOtraFirma))
-                .isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> jwtService.extractUsername(tokenConOtraFirma)).isInstanceOf(RuntimeException.class);
     }
 
     @Test
@@ -67,8 +70,7 @@ public class JwtServiceTest {
         ReflectionTestUtils.setField(jwtService, "publicKey", "not-a-base64-key");
 
         // Act & Assert
-        assertThatThrownBy(() -> jwtService.extractUsername("any.token.here"))
-                .isInstanceOf(RuntimeException.class)
+        assertThatThrownBy(() -> jwtService.extractUsername("any.token.here")).isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Error loading public key");
     }
 }

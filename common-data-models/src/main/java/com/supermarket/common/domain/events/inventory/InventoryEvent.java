@@ -1,9 +1,11 @@
 package com.supermarket.common.domain.events.inventory;
 
 import java.time.Instant;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.supermarket.common.domain.events.DomainEvent;
 import com.supermarket.common.domain.model.InventoryEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -42,12 +44,12 @@ public class InventoryEvent extends DomainEvent {
     /**
      * Creates a reduce stock event.
      *
-     * @param inventory the inventory that was reduced
+     * @param inventory
+     *            the inventory that was reduced
      * @return InventoryEvent with REDUCE_STOCK type
      */
     public static InventoryEvent reduceStock(InventoryEntity inventory) {
-        InventoryEvent event =
-                InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
+        InventoryEvent event = InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(InventoryEventType.REDUCE_STOCK);
         event.setAggregateId(inventory.getProductId().toString());
@@ -58,12 +60,12 @@ public class InventoryEvent extends DomainEvent {
     /**
      * Creates a receive shipment event.
      *
-     * @param inventory the inventory that was received
+     * @param inventory
+     *            the inventory that was received
      * @return InventoryEvent with RECEIVE_SHIPMENT type
      */
     public static InventoryEvent receiveShipment(InventoryEntity inventory) {
-        InventoryEvent event =
-                InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
+        InventoryEvent event = InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(InventoryEventType.RECEIVE_SHIPMENT);
         event.setAggregateId(inventory.getProductId().toString());
@@ -74,12 +76,12 @@ public class InventoryEvent extends DomainEvent {
     /**
      * Creates a create product event.
      *
-     * @param inventory the inventory that was created
+     * @param inventory
+     *            the inventory that was created
      * @return InventoryEvent with CREATE_PRODUCT type
      */
     public static InventoryEvent createProduct(InventoryEntity inventory) {
-        InventoryEvent event =
-                InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
+        InventoryEvent event = InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(InventoryEventType.CREATE_PRODUCT);
         event.setAggregateId(inventory.getProductId().toString());

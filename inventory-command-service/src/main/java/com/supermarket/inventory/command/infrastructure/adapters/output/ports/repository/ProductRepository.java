@@ -1,8 +1,10 @@
 package com.supermarket.inventory.command.infrastructure.adapters.output.ports.repository;
 
 import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
 import com.supermarket.common.domain.model.ProductEntity;
 
 /**

@@ -2,10 +2,12 @@ package com.supermarket.auth.application.service;
 
 import java.util.Collections;
 import java.util.HashSet;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import com.supermarket.auth.domain.model.User;
 import com.supermarket.auth.domain.model.UserRole;
 import com.supermarket.auth.infrastructure.adapters.input.dto.AuthResponseDTO;
@@ -16,6 +18,7 @@ import com.supermarket.auth.infrastructure.adapters.output.mapper.UserEntityMapp
 import com.supermarket.auth.infrastructure.adapters.output.repository.RoleRepository;
 import com.supermarket.auth.infrastructure.adapters.output.repository.UserRepository;
 import com.supermarket.auth.infrastructure.config.security.JwtService;
+
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -28,67 +31,69 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationService {
 
-  /** Repository for accessing user data. */
-  private final UserRepository userRepository;
+    /** Repository for accessing user data. */
+    private final UserRepository userRepository;
 
-  /** Repository for accessing role data. */
-  private final RoleRepository roleRepository;
+    /** Repository for accessing role data. */
+    private final RoleRepository roleRepository;
 
-  /** Mapper for converting between entities and domain models. */
-  private final UserEntityMapperImpl userMapper;
+    /** Mapper for converting between entities and domain models. */
+    private final UserEntityMapperImpl userMapper;
 
-  /** Service for encoding and matching passwords. */
-  private final PasswordEncoder passwordEncoder;
+    /** Service for encoding and matching passwords. */
+    private final PasswordEncoder passwordEncoder;
 
-  /** Service for handling JWT operations. */
-  private final JwtService jwtService;
+    /** Service for handling JWT operations. */
+    private final JwtService jwtService;
 
-  /** Manager for authentication processing. */
-  private final AuthenticationManager authenticationManager;
+    /** Manager for authentication processing. */
+    private final AuthenticationManager authenticationManager;
 
-  /**
-   * Registers a new user.
-   *
-   * @param request the registration request
-   * @return authentication response with JWT token
-   * @throws IllegalArgumentException if username or email already exists
-   */
-  public AuthResponseDTO register(RegisterRequestDTO request) {
-    if (userRepository.existsByUsername(request.getUsername())) {
-      throw new IllegalArgumentException("Username already exists");
+    /**
+     * Registers a new user.
+     *
+     * @param request
+     *            the registration request
+     * @return authentication response with JWT token
+     * @throws IllegalArgumentException
+     *             if username or email already exists
+     */
+    public AuthResponseDTO register(RegisterRequestDTO request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        UserEntity user = UserEntity.builder().username(request.getUsername()).email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .roles(new HashSet<>(Collections.singletonList(roleRepository.findByName(UserRole.USER).orElseThrow())))
+                .enabled(true).build();
+
+        UserEntity savedUser = userRepository.save(user);
+        User domainUser = userMapper.toDomain(savedUser);
+        String jwtToken = jwtService.generateToken(domainUser);
+
+        return new AuthResponseDTO(jwtToken, domainUser.getUsername(), domainUser.getEmail());
     }
-    if (userRepository.existsByEmail(request.getEmail())) {
-      throw new IllegalArgumentException("Email already exists");
+
+    /**
+     * Authenticates a user.
+     *
+     * @param request
+     *            the login request
+     * @return authentication response with JWT token
+     */
+    public AuthResponseDTO login(LoginRequestDTO request) {
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+        User user = userRepository.findByUsername(request.getUsername()).map(userMapper::toDomain)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+
+        String jwtToken = jwtService.generateToken(user);
+
+        return new AuthResponseDTO(jwtToken, user.getUsername(), user.getEmail());
     }
-
-    UserEntity user = UserEntity.builder().username(request.getUsername()).email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .roles(new HashSet<>(
-            Collections.singletonList(roleRepository.findByName(UserRole.USER).orElseThrow())))
-        .enabled(true).build();
-
-    UserEntity savedUser = userRepository.save(user);
-    User domainUser = userMapper.toDomain(savedUser);
-    String jwtToken = jwtService.generateToken(domainUser);
-
-    return new AuthResponseDTO(jwtToken, domainUser.getUsername(), domainUser.getEmail());
-  }
-
-  /**
-   * Authenticates a user.
-   *
-   * @param request the login request
-   * @return authentication response with JWT token
-   */
-  public AuthResponseDTO login(LoginRequestDTO request) {
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-
-    User user = userRepository.findByUsername(request.getUsername()).map(userMapper::toDomain)
-        .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
-
-    String jwtToken = jwtService.generateToken(user);
-
-    return new AuthResponseDTO(jwtToken, user.getUsername(), user.getEmail());
-  }
 }

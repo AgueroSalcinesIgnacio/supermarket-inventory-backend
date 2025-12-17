@@ -4,8 +4,10 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.function.Function;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -29,8 +31,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().verifyWith(getVerifyKey()).build().parseSignedClaims(token)
-                .getPayload();
+        return Jwts.parser().verifyWith(getVerifyKey()).build().parseSignedClaims(token).getPayload();
     }
 
     private PublicKey getVerifyKey() {
