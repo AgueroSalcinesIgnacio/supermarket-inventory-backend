@@ -1,4 +1,4 @@
-package com.supermarket.inventory.infrastructure.adapters.output.repository;
+package com.supermarket.inventory.infrastructure.adapters.output.ports.repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity, UUID
    * @param productId the productId
    * @return Optional containing the inventory if found
    */
-  Optional<InventoryEntity> findByProductId(String productId);
+  Optional<InventoryEntity> findByProductId(UUID productId);
 
 
 

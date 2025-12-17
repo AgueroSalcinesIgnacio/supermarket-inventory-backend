@@ -32,7 +32,8 @@ CREATE TABLE USERS_ROLES (
 \c inventory_write;
 
 CREATE TABLE PRODUCTS (
-    product_id VARCHAR(255) PRIMARY KEY,
+    id UUID PRIMARY KEY,
+    code VARCHAR(255) UNIQUE NOT NULL,
     name VARCHAR(255),
     category VARCHAR(100),
     price DECIMAL(10, 2)
@@ -40,11 +41,11 @@ CREATE TABLE PRODUCTS (
 
 CREATE TABLE INVENTORY (
     id UUID PRIMARY KEY,
-    product_id VARCHAR(255) NOT NULL,
+    product_id UUID UNIQUE NOT NULL,
     stock_local INTEGER,
     version BIGINT,
     updated_at TIMESTAMP,
-    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES PRODUCTS(product_id)
+    CONSTRAINT fk_product FOREIGN KEY (product_id) REFERENCES PRODUCTS(id)
 );
 
 CREATE TABLE OUTBOX (

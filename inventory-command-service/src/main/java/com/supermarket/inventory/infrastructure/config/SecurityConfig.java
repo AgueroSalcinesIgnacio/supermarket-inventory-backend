@@ -2,21 +2,12 @@ package com.supermarket.inventory.infrastructure.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.supermarket.inventory.infrastructure.config.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -42,11 +33,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-  /** Filter to handle JWT authentication for requests. */
-  private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-  /** Service to load user details from the database. */
-  private final UserDetailsService userDetailsService;
 
   /**
    * Configures the security filter chain.
@@ -58,52 +44,14 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
-        // Public endpoints
-        .requestMatchers("/api/auth/**").permitAll().requestMatchers("/actuator/**").permitAll()
-        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+        // Public endpoints ("/api/inventory/**" will be secured)
+        .requestMatchers("/api/inventory/**").permitAll().requestMatchers("/actuator/**")
+        .permitAll().requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
         // Protected endpoints
-        .anyRequest().authenticated())
-        .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authenticationProvider())
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .anyRequest().authenticated()).sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
     return http.build();
   }
 
-  /**
-   * Creates the authentication provider using DAO authentication.
-   *
-   * @return configured DaoAuthenticationProvider
-   */
-  @Bean
-  public AuthenticationProvider authenticationProvider() {
-    var authProvider = new DaoAuthenticationProvider();
-    authProvider.setPasswordEncoder(passwordEncoder());
-    authProvider.setUserDetailsService(userDetailsService);
-    return authProvider;
-  }
-
-  /**
-   * Provides the authentication manager bean.
-   *
-   * @param config the authentication configuration
-   * @return the AuthenticationManager
-   * @throws Exception if an error occurs
-   */
-  @Bean
-  public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception {
-    return config.getAuthenticationManager();
-  }
-
-  /**
-   * Provides BCrypt password encoder.
-   *
-   * @return BCryptPasswordEncoder instance
-   */
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
 }

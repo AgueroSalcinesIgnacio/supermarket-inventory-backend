@@ -20,7 +20,7 @@ import io.swagger.v3.oas.models.info.Info;
  * <li>/swagger-ui.html - Interactive Swagger UI
  * </ul>
  *
- * @author Supermarket Team
+ * @author Ignacio Agüero Salcines
  * @since 1.0
  */
 @Configuration

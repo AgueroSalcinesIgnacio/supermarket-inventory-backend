@@ -50,7 +50,7 @@ public class InventoryEvent extends DomainEvent {
                 InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(InventoryEventType.REDUCE_STOCK);
-        event.setAggregateId(inventory.getProductId());
+        event.setAggregateId(inventory.getProductId().toString());
         event.setAggregateType(INVENTORY_AGGREGATE_TYPE);
         return event;
     }
@@ -66,7 +66,7 @@ public class InventoryEvent extends DomainEvent {
                 InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(InventoryEventType.RECEIVE_SHIPMENT);
-        event.setAggregateId(inventory.getProductId());
+        event.setAggregateId(inventory.getProductId().toString());
         event.setAggregateType(INVENTORY_AGGREGATE_TYPE);
         return event;
     }
@@ -82,7 +82,7 @@ public class InventoryEvent extends DomainEvent {
                 InventoryEvent.builder().inventoryData(InventoryEventData.from(inventory)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(InventoryEventType.CREATE_PRODUCT);
-        event.setAggregateId(inventory.getProductId());
+        event.setAggregateId(inventory.getProductId().toString());
         event.setAggregateType(INVENTORY_AGGREGATE_TYPE);
         return event;
     }

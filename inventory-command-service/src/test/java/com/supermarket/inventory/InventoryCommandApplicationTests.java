@@ -1,4 +1,4 @@
-package com.supermarket.auth;
+package com.supermarket.inventory;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.supermarket.inventory.infrastructure.adapters.input.InventoryController;
 
 @SpringBootTest
-class AuthApplicationTests {
+class InventoryCommandApplicationTests {
 
   @Autowired
   private InventoryController inventoryController;

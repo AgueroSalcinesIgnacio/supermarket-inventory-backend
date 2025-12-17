@@ -50,7 +50,7 @@ public class ProductEvent extends DomainEvent {
                 ProductEvent.builder().productData(ProductEventData.from(product)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(ProductEventType.CREATED);
-        event.setAggregateId(product.getProductId());
+        event.setAggregateId(product.getCode());
         return event;
     }
 
@@ -65,7 +65,7 @@ public class ProductEvent extends DomainEvent {
                 ProductEvent.builder().productData(ProductEventData.from(product)).build();
         event.setTimestamp(Instant.now());
         event.setEventType(ProductEventType.UPDATED);
-        event.setAggregateId(product.getProductId());
+        event.setAggregateId(product.getCode());
         return event;
     }
 

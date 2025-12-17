@@ -1,5 +1,6 @@
 package com.supermarket.common.domain.model;
 
+import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class InventoryProjectionEntity {
 
     @Id
-    private String productId;
+    private UUID productId;
 
     @Column(nullable = false)
     private String productName;

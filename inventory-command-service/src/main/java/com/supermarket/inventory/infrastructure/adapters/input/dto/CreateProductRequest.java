@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateProductRequest {
     @NotBlank
-    private String productId;
+    private String productCode;
 
     @NotBlank
     private String name;

@@ -1,5 +1,6 @@
 package com.supermarket.common.domain.events.inventory;
 
+import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.supermarket.common.domain.model.InventoryEntity;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class InventoryEventData {
     @JsonProperty("productId")
-    private String productId;
+    private UUID productId;
 
     @JsonProperty("quantity")
     private int quantity;
@@ -35,7 +36,7 @@ public class InventoryEventData {
      * @return InventoryEventData containing inventory information
      */
     public static InventoryEventData from(InventoryEntity inventory) {
-        return InventoryEventData.builder().productId(inventory.getProductId())
+        return InventoryEventData.builder().productId(inventory.getId())
                 .quantity(inventory.getStockLocal()).build();
     }
 }

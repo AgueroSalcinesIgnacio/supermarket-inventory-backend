@@ -37,6 +37,7 @@ public class OutboxEntity {
     @Column(nullable = false)
     private String type;
 
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.JSON)
     @Column(name = "payload", columnDefinition = "jsonb", nullable = false)
     private String payload; // Store the JSON payload as a String
 

@@ -1,8 +1,9 @@
-package com.supermarket.inventory.infrastructure.adapters.output.repository;
+package com.supermarket.inventory.infrastructure.adapters.output.ports.repository;
 
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.supermarket.common.domain.model.ProductEntity;
+import com.supermarket.common.domain.model.OutboxEntity;
 
 /**
  * Spring Data JPA repository for Inventory entities.
@@ -11,8 +12,6 @@ import com.supermarket.common.domain.model.ProductEntity;
  * @since 1.0
  */
 @Repository
-public interface ProductRepository extends JpaRepository<ProductEntity, String> {
-
-
+public interface OutboxRepository extends JpaRepository<OutboxEntity, UUID> {
 
 }

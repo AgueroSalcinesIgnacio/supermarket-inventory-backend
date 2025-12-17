@@ -1,6 +1,7 @@
 package com.supermarket.common.domain.events.product;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.supermarket.common.domain.model.ProductEntity;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductEventData {
     @JsonProperty("productId")
-    private String productId;
+    private UUID productId;
 
     @JsonProperty("name")
     private String name;
@@ -42,7 +43,7 @@ public class ProductEventData {
      * @return ProductEventData containing product information
      */
     public static ProductEventData from(ProductEntity product) {
-        return ProductEventData.builder().productId(product.getProductId()).name(product.getName())
+        return ProductEventData.builder().productId(product.getId()).name(product.getName())
                 .category(product.getCategory()).price(product.getPrice()).build();
     }
 }

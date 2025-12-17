@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcessOrderRequest {
+
     @NotNull
-    private String productId;
+    private String productCode;
 
     @NotNull
     @Positive

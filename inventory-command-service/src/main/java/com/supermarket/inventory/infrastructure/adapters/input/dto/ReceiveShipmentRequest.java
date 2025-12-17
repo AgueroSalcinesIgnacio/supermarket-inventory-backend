@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReceiveShipmentRequest {
     @NotNull
-    private String productId;
+    private String productCode;
 
     @NotNull
     @Positive
