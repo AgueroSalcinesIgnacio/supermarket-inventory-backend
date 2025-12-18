@@ -1,0 +1,17 @@
+---
+spring:
+  application:
+    name: "inventory-consumer-service"
+  kafka:
+    producer:
+      value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+    consumer:
+      group-id: "inventory-group"
+      auto-offset-reset: "earliest"
+      value-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+      key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+      properties:
+        spring.deserializer.value.delegate.class: "org.springframework.kafka.support.serializer.JsonDeserializer"
+        spring.json.trusted.packages: "com.supermarket.*"
+jwt:
+  public-key: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAidRGCEvj+QFc1oFAZ0zOJit+mrzUSbdyye0smKxxt51kp5vCUnsbGSzgSOij5MwuHNqc9BDMOSY5r64WnePmFQ1bA3mBRyGGjCMXea/oV9dneqnxTHt23a4JJIkZnSmbhq/ALJgeCyrdk+WKfSX+pch4IVZxwhRRHZ4KU0SUwA1bInrcKDGiN3kd974zhQQYxroYKFOPt6GvecnqPz9Q+A9wDORIrKsZOvO+3yFfSCDHNq/ePBpXykcF9Kh70BYHO+aYNkQmcFHhvtujxbybOpUbZ3MlGWE9c9HAoRkpv/Aq5h8vrgMBRG3HrsijLM+ZVklP86i1DGBDrJQegdS7FQIDAQAB"

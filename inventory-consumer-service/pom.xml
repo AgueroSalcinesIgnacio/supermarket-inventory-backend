@@ -9,10 +9,10 @@
   </parent>
 
   <groupId>com.supermarket</groupId>
-  <artifactId>auth-service</artifactId>
+  <artifactId>inventory-consumer-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Auth Service</name>
-  <description>Authentication and Authorization Microservice</description>
+  <name>Inventory Consumer Service</name>
+  <description>Inventory Consumer Microservice</description>
 
   <properties>
     <java.version>21</java.version>
@@ -29,6 +29,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>com.supermarket</groupId>
+      <artifactId>common</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -105,6 +110,15 @@
       <artifactId>h2</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -144,7 +158,6 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>
-
       <!-- JaCoCo plugin to generate coverage reports and enforce minimum coverage -->
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -152,7 +165,7 @@
         <version>${jacoco.version}</version>
         <configuration>
           <excludes>
-            <exclude>**/AuthApplication.class</exclude>
+            <exclude>**/InventoryConsumerApplication.class</exclude>
           </excludes>
         </configuration>
         <executions>

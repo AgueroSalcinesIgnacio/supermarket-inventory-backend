@@ -61,7 +61,7 @@ CREATE TABLE OUTBOX (
 \c inventory_read;
 
 CREATE TABLE INVENTORY_PROJECTION (
-    product_id VARCHAR(255) PRIMARY KEY,
+    product_id UUID PRIMARY KEY,
     product_name VARCHAR(255),
     current_stock INTEGER,
     last_updated_by_event_id VARCHAR(255)
